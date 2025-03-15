@@ -1,0 +1,56 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  
+  # Create virtual machines
+  servers=[
+    {
+      :hostname => "VSV-01",
+      :box => "ubuntu/jammy64",
+      :ip => "172.16.1.11",
+      :ssh_port => '2201',
+      :http_port => '8081'
+    },
+    {
+      :hostname => "VSV-02",
+      :box => "ubuntu/jammy64",
+      :ip => "172.16.1.12",
+      :ssh_port => '2202',
+      :http_port => '8082'
+    },
+    {
+      :hostname => "VSV-03",
+      :box => "ubuntu/jammy64",
+      :ip => "172.16.1.13",
+      :ssh_port => '2203',
+      :http_port => '8083'
+    }
+  ]
+
+  # Go trough every node for each machine stated in servers
+  servers.each do |machine|
+    config.vm.define machine[:hostname] do |node|
+      node.vm.box = machine[:box]
+      node.vm.hostname = machine[:hostname]
+      node.vm.network :private_network, ip: machine[:ip]
+      node.vm.network "forwarded_port", guest: 22, host: machine[:ssh_port], id: "ssh"
+      node.vm.network "forwarded_port", guest: 80, host: machine[:http_port], id: "http"
+      #node.vm.synched_folder "../data", "home/vagrant/data"
+      #node.vm.provision "file", source: "./copiedfile.txt", destination: "/home/vagrant/copiedfile.txt"
+
+      node.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--memory", 1024]
+        vb.customize ["modifyvm", :id, "--cpus", 1]
+      end
+      
+      # Update and upgrade machine
+      node.vm.provision "shell", inline: <<-SHELL
+        echo "Updating repos"
+        apt-get update
+        echo "Upgrading packages"
+        apt-get upgrade -y
+      SHELL
+    end
+  end
+end
