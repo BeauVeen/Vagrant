@@ -1,8 +1,6 @@
 #!/bin/bash
 
-# Update and install Apache, MySQL, PHP, and necessary extensions
-sudo apt-get update
-sudo apt-get upgrade -y
+# Install Apache, MySQL, PHP, and necessary extensions
 sudo apt-get install -y apache2 mysql-server php php-mysql libapache2-mod-php unzip curl
 
 # Start Apache and MySQL services

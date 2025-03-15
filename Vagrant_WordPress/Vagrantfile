@@ -43,6 +43,12 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--cpus", 1]
       end
 
+      # Update and upgrade machine
+      node.vm.provision "shell", inline: <<-SHELL
+        apt-get update
+        apt-get upgrade -y
+      SHELL
+      
       # Script to install wordpress and needed dependency
       node.vm.provision "shell", path: "wordpress_install.sh"
     end
