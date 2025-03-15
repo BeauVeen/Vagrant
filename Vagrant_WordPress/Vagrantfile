@@ -38,6 +38,7 @@ Vagrant.configure("2") do |config|
       node.vm.network "forwarded_port", guest: 80, host: machine[:http_port], id: "http"
       #node.vm.synched_folder "../data", "home/vagrant/data"
       #node.vm.provision "file", source: "./copiedfile.txt", destination: "/home/vagrant/copiedfile.txt"
+      
       node.vm.provider :virtualbox do |vb|
         vb.customize ["modifyvm", :id, "--memory", 1024]
         vb.customize ["modifyvm", :id, "--cpus", 1]
@@ -48,7 +49,7 @@ Vagrant.configure("2") do |config|
         apt-get update
         apt-get upgrade -y
       SHELL
-      
+
       # Script to install wordpress and needed dependency
       node.vm.provision "shell", path: "wordpress_install.sh"
     end
